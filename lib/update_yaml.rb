@@ -1,6 +1,6 @@
 require 'yaml'
-require './util/path_getter.rb'
-require './util/file_editor.rb'
+require './lib/util/path_getter.rb'
+require './lib/util/file_editor.rb'
 
 path = Dir.glob(user_path+'/.config/clash/*-*-*.yaml')[0]
 if path
