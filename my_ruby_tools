@@ -34,4 +34,12 @@ def update_proxy()
     end
 end
 
-update_proxy()
+# update_proxy()
+
+def main(argv)
+    if argv.first == 'clashX'
+        update_proxy()
+    end
+end
+
+main(ARGV)
