@@ -36,11 +36,11 @@ end
 
 def gitACP(comment)
     if system('git add .')
-        puts "add success"
+        puts ">>>>>>>>>>>>>>>>> add success <<<<<<<<<<<<<<<<"
         if system("git commit -m '"+comment+"'")
-            puts "commit success"
+            puts ">>>>>>>>>>>>>>>>> commit success <<<<<<<<<<<<<<<<"
             if system("git push")
-                puts "push success"
+                puts ">>>>>>>>>>>>>>>>> push success <<<<<<<<<<<<<<<<"
             end
         end
     end
