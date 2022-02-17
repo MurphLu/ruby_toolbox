@@ -2,4 +2,4 @@
 
 run `gem install`
 
-set my_ruby_tool in you $path
+set my_ruby_tools path in you $path
