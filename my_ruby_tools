@@ -34,12 +34,28 @@ def update_proxy()
     end
 end
 
-# update_proxy()
+def gitACP(comment)
+    if system('git add .')
+        puts "add success"
+        if system("git commit -m '"+comment+"'")
+            puts "commit success"
+            if system("git push")
+                puts "push success"
+            end
+        end
+    end
+end
 
 def main(argv)
     if argv.first == 'clashX'
         update_proxy()
+    elsif argv.first == 'gitACP'
+        gitACP(argv[1])
+    else
+        puts 'no match command'
     end
+    
+    
 end
 
 main(ARGV)
