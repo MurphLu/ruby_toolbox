@@ -1,0 +1,223 @@
+#!/usr/bin/env ruby
+require 'yaml'
+
+def write_to_file(path, content)
+    File.open(path, 'w') do |f|
+        f.write(content)
+        f.close()
+    end
+end
+
+def user_path
+    return File.expand_path('~')
+end
+
+def formatted_log(log)
+    log_len = 68
+    str = '===================================================================='
+    prefix_suffix_len = (68 - log.length) / 2
+    prefix_suffix = str[0, prefix_suffix_len];
+    formatted = "#{prefix_suffix} #{log} #{prefix_suffix}"
+    return formatted
+end
+
+class Command
+    def initialize()
+        @default_command = 'desc'
+        @commandMap = Hash.new(@default_command)
+        add_commands()
+    end
+
+    def add_commands()
+    end
+
+    def exec(argv)
+        cmd = argv[1]
+        send("#{@commandMap[cmd]}")
+    end
+
+    def get_command_or_default()
+    end
+end
+
+class Git < Command
+    
+    def add_commands()
+        @commandMap['acp'] = 'acp'
+    end
+
+    def acp(comment)
+        system("
+        echo #{formatted_log("start git action pre check and if set proxy")}
+        if git remote get-url --all origin | grep github.com; then
+            echo 'remote is github.com'
+            echo #{formatted_log("check and set proxy")}
+            clashX=`lsof -i tcp:7890 | grep ClashX | grep LISTEN | wc -l | sed -e 's/^[ \t]*//g'`
+            if test $clashX -gt 0; then
+                echo '--- ClashX is running'
+                export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+                echo '--- set proxy success'
+                echo 'detail: '
+                printf '\t http_proxy: %s \n' $http_proxy
+                printf '\t https_proxy: %s \n' $https_proxy
+                printf '\t all_proxy: %s \n' $all_proxy
+            else
+                echo 'ClashX is not running'
+            fi
+            echo #{formatted_log("end check and set proxy")}
+        fi
+        echo #{formatted_log("start git action with comment: #{comment}")}
+        echo 'step 1. check if need add'
+        stage_status=`git status | grep 'Changes not staged for commit' | wc -l | sed -e 's/^[ \t]*//g'`
+        if test $stage_status -gt 0; then
+            if git add .; then
+                echo '---- git add success'
+            fi
+        else
+            echo '---- git add not need'
+        fi
+        
+        echo 'step 2. check if need commit'
+        commit_status=`git status | grep 'Changes to be committed' | wc -l | sed -e 's/^[ \t]*//g'`
+        if test $commit_status -gt 0; then
+            if git commit -m '#{comment}'; then
+                echo '--- git commit success'
+            fi
+        else
+            echo '--- git commit not need'
+        fi
+        
+        echo 'step 3. check if need push'
+        push_status=`git status | grep 'Your branch is ahead of' | wc -l | sed -e 's/^[ \t]*//g'`
+        if test $push_status -gt 0; then
+            if git push; then
+                echo '---- git push success'
+            fi
+        else
+            echo '--- git push not need'
+        fi
+        echo #{formatted_log("finish git action with comment: #{comment}")}
+        ")
+        
+    end
+
+    def exec(argv)
+        cmd = argv[1]
+        if cmd == 'acp'
+            comment = argv[2]
+            acp(comment)
+        else
+            send("#{@commandMap[cmd]}")
+        end
+    end
+
+    def desc()
+        puts "mrt [git] [command] you can use commands blow:"
+        puts "  acp       tar action for add commit push"
+    end
+end
+
+class FFmpeg < Command
+    def add_commands()
+        @commandMap['down'] = 'downLoadVideo'
+    end
+
+    def downLoadVideo(url)
+        system("ffmpeg -i '#{url}' -bsf:a aac_adtstoasc \
+        -vcodec copy -c copy -crf 50 #{Time.now.to_i}.mp4")
+    end
+
+    def exec(argv)
+        cmd = argv[1]
+        if cmd == 'down'
+            url = argv[2].split("=")
+            if url[0] == '-url'
+                downLoadVideo(url[1])
+            end
+        else
+            send("#{@commandMap[cmd]}")
+        end
+    end
+
+    def desc()
+        puts "mrt [ffmpeg] [down]  you can use commands blow:"
+        puts "  down        update clashX US proxies config"
+    end
+end
+
+class Clash < Command
+    
+    def add_commands()
+        @commandMap['us'] = 'up_us'
+        @commandMap['rules'] = 'up_rules'
+    end
+
+    def up_us()
+        path = Dir.glob(user_path+'/.config/clash/*-*-*.yaml')[0]
+        path_us = Dir.glob(user_path+'/.config/clash/us.yaml')[0]
+        if path
+            yaml = YAML.load_file(path)
+            proxies = yaml['proxies']
+            yaml_us = YAML.load_file(path_us)
+            proxies_us = []
+            proxies.each do |proxy|
+                if(proxy['name'].index('UnitedStates') == 0)
+                    proxies_us.push(proxy)
+                end
+            end
+            yaml_us['proxies'] = proxies_us
+            write_to_file(path_us, yaml_us.to_yaml)
+        end
+        puts "update us proxies success"
+    end
+
+    def up_rules()
+        path = Dir.glob(user_path+'/.config/clash/*-*-*.yaml')[0]
+        if path
+            yaml = YAML.load_file(path)
+            rules = yaml['rules']
+            newRules = [];
+            newRules.push(['DOMAIN-SUFFIX','homecreditcfc.cn','DIRECT'].join(','))
+            newRules.push(['DOMAIN-SUFFIX','homecredit.cn','DIRECT'].join(','))
+            rules.each do |e|
+                arr = e.split(',')
+                if ['baidu', 'bdimg.com', 'bdstatic.com'].index(arr[1])
+                    arr[2] = 'Proxy'
+                    newRules.push(arr.join(','))
+                else
+                    newRules.push(e)
+                end
+            end
+
+            yaml['rules'] = newRules
+            write_to_file(path, yaml.to_yaml)
+        else
+            puts "not a file"
+        end
+        puts "update rules success"
+    end
+    def desc()
+        puts "mrt [clash] [command]  you can use commands blow:"
+        puts "  us        update clashX US proxies config"
+        puts "  rules     update clashX rules config"
+    end
+end
+
+
+def main(argv)
+    commands = Hash.new("commandClass")
+    commands['clash'] = Clash.new
+    # commands['clash'].exec(argv)
+    commands['git'] = Git.new
+    commands['ffmpeg'] = FFmpeg.new
+    if argv.length >= 2 && commands[argv.first] != "commandClass"
+        commands[argv.first].exec(argv)
+    else
+        commands.keys.each do |key|
+            puts '---------------------------------------------'
+            commands[key].exec(['', ''])
+        end
+    end
+end
+
+main(ARGV)
