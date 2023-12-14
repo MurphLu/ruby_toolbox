@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
+require 'mimo'
 
-require 'cli_tools_distributor'
-
-MiMO::CLIToolsDistributor.take_off
+MiMO::MRT.fire

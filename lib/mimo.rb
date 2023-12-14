@@ -1,10 +1,10 @@
 require 'git_tools'
 
 module MiMO
-    class Test
+    class MRT
         class << self
-            def main(arg)
-                MiMO::GitTools.check()
+            def fire
+                MiMO::CLIToolsDistributor.take_off()
             end
         end
     end

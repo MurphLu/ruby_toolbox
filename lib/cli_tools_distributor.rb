@@ -3,6 +3,7 @@ module MiMO
         class << self
             def take_off
                 puts ARGV
+                ARGV.first
             end
         end
     end
