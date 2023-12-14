@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'cli_tools_distributor'
+
+MiMO::CLIToolsDistributor.take_off
