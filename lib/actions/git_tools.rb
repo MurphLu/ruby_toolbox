@@ -6,18 +6,16 @@ module MiMOWheel
             puts args
             params = anaylaze_params(args)
             command = build_command(params[0], params[1], params[2], params[3])
-            puts command
             exec_command(command)
         end
 
         def anaylaze_params(args) 
               command = get_command(args)
-              need_add = command.include?("a")
-              need_commit = command.include?("c")
-              need_push = command.include?("p")
+              need_add = command == nil ? true : command.include?("a")
+              need_commit = command == nil ? true : command.include?("c")
+              need_push = command == nil ? true : command.include?("p")
               comment = args[-1]
               params = [need_add, need_commit, need_push, comment]
-              
               return params
         end
 
