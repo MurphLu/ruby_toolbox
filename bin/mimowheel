@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'mimo_wheel'
+
+MiMOWheel::ToolBox.fire
