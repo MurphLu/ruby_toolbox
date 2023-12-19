@@ -1,4 +1,6 @@
 require 'actions/git_tools'
+require 'actions/clash_tools'
+require 'actions/ffmpeg_tools'
 
 module MiMOWheel
     
@@ -6,11 +8,11 @@ module MiMOWheel
         class << self
             @@actions = {
                     "git" => MiMOWheel::GitTools.new,
-                    "clashX" => ["up", "us"],
+                    "clashX" => MiMOWheel::ClashTools.new,
+                    "video" => MiMOWheel::FFmpegTools.new
             }
 
             def get_action_module(action)
-                puts @@actions
                 if @@actions.has_key?(action)
                     return @@actions.fetch(action)
                 else

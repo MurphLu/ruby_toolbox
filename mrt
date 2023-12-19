@@ -177,8 +177,6 @@ class Clash < Command
             yaml = YAML.load_file(path)
             rules = yaml['rules']
             newRules = [];
-            newRules.push(['DOMAIN-SUFFIX','homecreditcfc.cn','DIRECT'].join(','))
-            newRules.push(['DOMAIN-SUFFIX','homecredit.cn','DIRECT'].join(','))
             rules.each do |e|
                 arr = e.split(',')
                 if ['baidu', 'bdimg.com', 'bdstatic.com'].index(arr[1])
