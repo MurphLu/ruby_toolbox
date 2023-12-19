@@ -74,7 +74,6 @@ module MiMOWheel
                 else
                     echo '---- git add not need'
                 fi
-                
             "
         end
 
