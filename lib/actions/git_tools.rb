@@ -40,6 +40,7 @@ module MiMOWheel
             if need_push
                 check_and_run_push(comment)
             end
+            unset_proxy()
             # command = add_command + commit_command + push_command
             # return command
         end
@@ -66,6 +67,12 @@ module MiMOWheel
             puts '--- set proxy success'
 
             puts formatted_log("end check and set proxy")
+        end
+
+        def unset_proxy
+            ENV.delete('http_proxy')
+            ENV.delete('https_proxy')
+            ENV.delete('all_proxy')
         end
 
         def check_and_run_add(comment)
