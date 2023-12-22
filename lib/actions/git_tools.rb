@@ -5,8 +5,9 @@ module MiMOWheel
         def check_and_fire(args)
             puts args
             params = anaylaze_params(args)
-            command = build_command(params[0], params[1], params[2], params[3])
-            exec_command(command)
+            exec(params[0], params[1], params[2], params[3])
+            # exec_command(command)
+            # exec()
         end
 
         def anaylaze_params(args) 
@@ -28,13 +29,19 @@ module MiMOWheel
             return nil 
         end
         
-        def build_command(need_add, need_commit, need_push, comment)
+        def exec(need_add, need_commit, need_push, comment)
             check_and_set_proxy()
-            add_command = need_add ? add_command(comment) : ""
-            commit_command = need_commit ? commit_command(comment) : ""
-            push_command = need_push ? push_command(comment) : ""
-            command = add_command + commit_command + push_command
-            return command
+            if need_add 
+                check_and_run_add(comment)
+            end
+            if need_commit
+                check_and_run_commit(comment)
+            end
+            if need_push
+                check_and_run_push(comment)
+            end
+            # command = add_command + commit_command + push_command
+            # return command
         end
 
         def check_and_set_proxy
@@ -59,71 +66,49 @@ module MiMOWheel
             puts '--- set proxy success'
 
             puts formatted_log("end check and set proxy")
-
-            # return command = "
-            #     echo #{formatted_log("start git action pre check and if set proxy")}
-            #     if git remote get-url --all origin | grep github.com; then
-            #         echo 'remote is github.com'
-            #         echo #{formatted_log("check and set proxy")}
-            #         clashX=`lsof -i tcp:7890 | grep ClashX | grep LISTEN | wc -l | sed -e 's/^[ \t]*//g'`
-            #         if test $clashX -gt 0; then
-            #             echo '--- ClashX is running'
-            #             export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
-            #             echo '--- set proxy success'
-            #             echo 'detail: '
-            #             printf '\t http_proxy: %s \n' $http_proxy
-            #             printf '\t https_proxy: %s \n' $https_proxy
-            #             printf '\t all_proxy: %s \n' $all_proxy
-            #         else
-            #             echo 'ClashX is not running'
-            #         fi
-            #         echo #{formatted_log("end check and set proxy")}
-            #     fi
-            # "
         end
 
-        def add_command(comment)
-            return command = "
-                echo #{formatted_log("start git action with comment: #{comment}")}
-                echo 'step 1. check if need add'
-                stage_status=`git status | grep 'Changes not staged for commit' | wc -l | sed -e 's/^[ \t]*//g'`
-                if test $stage_status -gt 0; then
-                    if git add .; then
-                        echo '---- git add success'
-                    fi
-                else
-                    echo '---- git add not need'
-                fi
-            "
+        def check_and_run_add(comment)
+            puts 'step 1. check if need add'
+            add_status=`git status | grep 'Changes not staged for commit' | wc -l`
+            if add_status.strip == '0'
+                puts '---- git add not need'
+                return
+            end
+            if system('git add .')
+                puts '---- git add success'
+            else
+                puts '---- git add fail'
+            end
         end
 
-        def commit_command(comment)
-            return command = "
-                echo 'step 2. check if need commit'
-                commit_status=`git status | grep 'Changes to be committed' | wc -l | sed -e 's/^[ \t]*//g'`
-                if test $commit_status -gt 0; then
-                    if git commit -m '#{comment}'; then
-                        echo '--- git commit success'
-                    fi
-                else
-                    echo '--- git commit not need'
-                fi
-            "
+        def check_and_run_commit(comment)
+            puts 'step 2. check if need commit'
+            commit_status=`git status | grep 'Changes to be committed' | wc -l`
+            if commit_status.strip == '0'
+                puts '---- git commit not need'
+                return
+            end
+            if system("git commit -m '#{comment}'")
+                puts '---- git commit success'
+            else
+                puts '---- git commit fail'
+            end
         end
 
-        def push_command(comment)
-            return command = "
-                echo 'step 3. check if need push'
-                push_status=`git status | grep 'Your branch is ahead of' | wc -l | sed -e 's/^[ \t]*//g'`
-                if test $push_status -gt 0; then
-                    if git push; then
-                        echo '---- git push success'
-                    fi
-                else
-                    echo '--- git push not need'
-                fi
-                echo #{formatted_log("finish git action with comment: #{comment}")}
-            "
+        def check_and_run_push(comment)
+            puts 'step 3. check if need push'
+            commit_status=`git status | grep 'Your branch is ahead of' | wc -l`
+            if commit_status.strip == '0'
+                puts '---- git push not need'
+                return
+            end
+            if system("git push")
+                puts '---- git push success'
+            else
+                puts '---- git push fail'
+            end
+            puts formatted_log("finish git action with comment: #{comment}")
         end
 
         def exec_command(command)
