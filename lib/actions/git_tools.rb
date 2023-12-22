@@ -29,35 +29,57 @@ module MiMOWheel
         end
         
         def build_command(need_add, need_commit, need_push, comment)
-            proxy_command = check_and_set_proxy()
+            check_and_set_proxy()
             add_command = need_add ? add_command(comment) : ""
             commit_command = need_commit ? commit_command(comment) : ""
             push_command = need_push ? push_command(comment) : ""
-            command = proxy_command + add_command + commit_command + push_command
+            command = add_command + commit_command + push_command
             return command
         end
 
         def check_and_set_proxy
-            return command = "
-                echo #{formatted_log("start git action pre check and if set proxy")}
-                if git remote get-url --all origin | grep github.com; then
-                    echo 'remote is github.com'
-                    echo #{formatted_log("check and set proxy")}
-                    clashX=`lsof -i tcp:7890 | grep ClashX | grep LISTEN | wc -l | sed -e 's/^[ \t]*//g'`
-                    if test $clashX -gt 0; then
-                        echo '--- ClashX is running'
-                        export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
-                        echo '--- set proxy success'
-                        echo 'detail: '
-                        printf '\t http_proxy: %s \n' $http_proxy
-                        printf '\t https_proxy: %s \n' $https_proxy
-                        printf '\t all_proxy: %s \n' $all_proxy
-                    else
-                        echo 'ClashX is not running'
-                    fi
-                    echo #{formatted_log("end check and set proxy")}
-                fi
-            "
+            git_remote_url_github_flag=`git remote get-url --all origin | grep github.com | wc -l`
+            if git_remote_url_github_flag.strip == '0'
+                puts "no github remote skip set proxy"
+                return 
+            end
+            puts 'remote is github'
+            clash_running_flag=`lsof -i tcp:7890 | grep ClashX | grep LISTEN | wc -l`
+            if clash_running_flag.strip == '0'
+                puts "proxy not running"
+                return
+            end
+            puts 'proxy running'
+            puts 'set proxy to env'
+
+            ENV['http_proxy'] = 'http://127.0.0.1:7890'
+            ENV['https_proxy'] = 'http://127.0.0.1:7890'
+            ENV['all_proxy'] = 'socks5://127.0.0.1:7890'
+
+            puts '--- set proxy success'
+
+            puts formatted_log("end check and set proxy")
+
+            # return command = "
+            #     echo #{formatted_log("start git action pre check and if set proxy")}
+            #     if git remote get-url --all origin | grep github.com; then
+            #         echo 'remote is github.com'
+            #         echo #{formatted_log("check and set proxy")}
+            #         clashX=`lsof -i tcp:7890 | grep ClashX | grep LISTEN | wc -l | sed -e 's/^[ \t]*//g'`
+            #         if test $clashX -gt 0; then
+            #             echo '--- ClashX is running'
+            #             export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+            #             echo '--- set proxy success'
+            #             echo 'detail: '
+            #             printf '\t http_proxy: %s \n' $http_proxy
+            #             printf '\t https_proxy: %s \n' $https_proxy
+            #             printf '\t all_proxy: %s \n' $all_proxy
+            #         else
+            #             echo 'ClashX is not running'
+            #         fi
+            #         echo #{formatted_log("end check and set proxy")}
+            #     fi
+            # "
         end
 
         def add_command(comment)
