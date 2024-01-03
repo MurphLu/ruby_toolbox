@@ -1,6 +1,7 @@
 require 'actions/git_tools'
 require 'actions/clash_tools'
 require 'actions/ffmpeg_tools'
+require 'actions/pdf_tools'
 
 module MiMOWheel
     
@@ -9,7 +10,8 @@ module MiMOWheel
             @@actions = {
                     "git" => MiMOWheel::GitTools.new,
                     "clashX" => MiMOWheel::ClashTools.new,
-                    "video" => MiMOWheel::FFmpegTools.new
+                    "video" => MiMOWheel::FFmpegTools.new,
+                    "pdf" => MiMOWheel::PdfTools.new
             }
 
             def get_action_module(action)

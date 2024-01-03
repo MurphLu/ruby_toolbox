@@ -24,4 +24,5 @@ Gem::Specification.new do |s|
     s.add_dependency('yaml', '~> 0.1.0')
     s.add_dependency('colored', '~> 1.2')
     s.add_dependency('commander', '~> 4.4')
+    s.add_dependency('rmagick', '~>5')
 end

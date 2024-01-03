@@ -1,4 +1,5 @@
 require 'actions/action'
+require 'utils/proxy_manager'
 
 module MiMOWheel
     class GitTools < Action
@@ -40,7 +41,7 @@ module MiMOWheel
             if need_push
                 check_and_run_push(comment)
             end
-            unset_proxy()
+            MiMOWheel::ProxyManager.unset_proxy()
             # command = add_command + commit_command + push_command
             # return command
         end
@@ -52,21 +53,7 @@ module MiMOWheel
                 return 
             end
             puts 'remote is github'
-            clash_running_flag=`lsof -i tcp:7890 | grep ClashX | grep LISTEN | wc -l`
-            if clash_running_flag.strip == '0'
-                puts "proxy not running"
-                return
-            end
-            puts 'proxy running'
-            puts 'set proxy to env'
-
-            ENV['http_proxy'] = 'http://127.0.0.1:7890'
-            ENV['https_proxy'] = 'http://127.0.0.1:7890'
-            ENV['all_proxy'] = 'socks5://127.0.0.1:7890'
-
-            puts '--- set proxy success'
-
-            puts formatted_log("end check and set proxy")
+            MiMOWheel::ProxyManager.check_and_set_proxy()
         end
 
         def unset_proxy
