@@ -7,6 +7,11 @@ module MiMOWheel
                     f.close()
                 end
             end
+
+            def get_file_list(ext)
+                path = Dir.pwd()
+                
+            end
         end
     end
 end
