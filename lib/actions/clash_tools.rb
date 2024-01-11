@@ -26,7 +26,7 @@ module MiMOWheel
                 yaml_us['proxies'] = proxies_us
                 MiMOWheel::FileNamager.write_to_file(path_us, yaml_us.to_yaml)
             end
-            puts "update us proxies success"
+            info("update us proxies success")
         end
     end
 end

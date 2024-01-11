@@ -4,7 +4,6 @@ require 'utils/proxy_manager'
 module MiMOWheel
     class GitTools < Action
         def check_and_fire(args)
-            puts args
             params = anaylaze_params(args)
             exec(params[0], params[1], params[2], params[3])
             # exec_command(command)
@@ -49,10 +48,10 @@ module MiMOWheel
         def check_and_set_proxy
             git_remote_url_github_flag=`git remote get-url --all origin | grep github.com | wc -l`
             if git_remote_url_github_flag.strip == '0'
-                puts "no github remote skip set proxy"
+                info("no github remote skip set proxy")
                 return 
             end
-            puts 'remote is github'
+            info('remote is github')
             MiMOWheel::ProxyManager.check_and_set_proxy()
         end
 
@@ -63,30 +62,30 @@ module MiMOWheel
         end
 
         def check_and_run_add(comment)
-            puts 'step 1. check if need add'
+            info('step 1. check if need add')
             add_status=`git status | egrep 'Changes not staged for commit|Untracked files' | wc -l`
             if add_status.strip == '0'
-                puts '---- git add not need'
+                info('---- git add not need')
                 return
             end
             if system('git add .')
-                puts '---- git add success'
+                info('---- git add success')
             else
-                puts '---- git add fail'
+                info('---- git add fail')
             end
         end
 
         def check_and_run_commit(comment)
-            puts 'step 2. check if need commit'
+            info('step 2. check if need commit')
             commit_status=`git status | grep 'Changes to be committed' | wc -l`
             if commit_status.strip == '0'
-                puts '---- git commit not need'
+                info('---- git commit not need')
                 return
             end
             if system("git commit -m '#{comment}'")
-                puts '---- git commit success'
+                info('---- git commit success')
             else
-                puts '---- git commit fail'
+                info('---- git commit fail')
             end
         end
 

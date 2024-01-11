@@ -20,7 +20,7 @@ module MiMOWheel
                 for pdf in pdfs do
                     current+=1
                     filename = File.basename(pdf, '.pdf')
-                    puts "start to convert #{current}/#{total_count}, name: #{filename}"
+                    info("start to convert #{current}/#{total_count}, name: #{filename}")
                     
                     pdf_image = Magick::ImageList.new(pdf){|op|
                         op.density = "200"
@@ -29,12 +29,12 @@ module MiMOWheel
                     }
                     # pdf_image.quantize(256)
                     pdf_image.each_with_index do |page, index|
-                        puts "current page index #{index}..."
+                        info("current page index #{index}...")
                         page.write("#{target_path}/#{filename}_#{index}.jpg")
                     end
                 end
             else
-                puts 'env initialize fail'
+                info('env initialize fail')
             end
         end
 
