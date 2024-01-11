@@ -22,7 +22,12 @@ module MiMOWheel
                     filename = File.basename(pdf, '.pdf')
                     puts "start to convert #{current}/#{total_count}, name: #{filename}"
                     
-                    pdf_image = Magick::ImageList.new(pdf)
+                    pdf_image = Magick::ImageList.new(pdf){|op|
+                        op.density = "200"
+                        op.quality = 50
+                        op.format = "jpg"
+                    }
+                    # pdf_image.quantize(256)
                     pdf_image.each_with_index do |page, index|
                         puts "current page index #{index}..."
                         page.write("#{target_path}/#{filename}_#{index}.jpg")

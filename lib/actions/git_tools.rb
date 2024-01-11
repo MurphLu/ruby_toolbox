@@ -64,7 +64,7 @@ module MiMOWheel
 
         def check_and_run_add(comment)
             puts 'step 1. check if need add'
-            add_status=`git status | grep 'Changes not staged for commit' | wc -l`
+            add_status=`git status | egrep 'Changes not staged for commit|Untracked files' | wc -l`
             if add_status.strip == '0'
                 puts '---- git add not need'
                 return
