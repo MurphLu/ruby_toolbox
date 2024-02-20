@@ -84,7 +84,7 @@ module MiMOWheel
         end
 
         def check_and_run_push(comment)
-            puts 'step 3. check if need push'
+            info('step 3. check if need push')
             commit_status=`git status | grep 'Your branch is ahead of' | wc -l`
             if commit_status.strip == '0'
                 info('---- git push not need')
