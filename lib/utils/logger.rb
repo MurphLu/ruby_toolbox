@@ -5,6 +5,10 @@ module MiMOWheelLogger
         puts "[INFO] [#{Time.new}] #{msg}".green
     end
 
+    def command(msg)
+        puts "[RUN_COMMAND] #{Time.new} #{msg}".cyan
+    end
+
     def err(msg)
         puts "[ERROR] [#{Time.new}] #{msg}".red
     end

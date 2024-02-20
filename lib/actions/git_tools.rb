@@ -100,7 +100,7 @@ module MiMOWheel
         end
 
         def exec_command(command)
-            info("call command: #{command}")
+            command("call command: #{command}")
             return system(command)
         end
     end

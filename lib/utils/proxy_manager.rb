@@ -2,6 +2,7 @@ require "utils/logger"
 
 module MiMOWheelProxyManager
     include MiMOWheelLogger
+    
     def check_and_set_proxy
         clash_running_flag=`lsof -i tcp:7890 | grep ClashX | grep LISTEN | wc -l`
         if clash_running_flag.strip == '0'
