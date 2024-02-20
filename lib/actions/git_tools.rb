@@ -62,7 +62,7 @@ module MiMOWheel
                 info('---- git add not need')
                 return
             end
-            if system('git add .')
+            if exec_command('git add .')
                 info('---- git add success')
             else
                 info('---- git add fail')
@@ -76,7 +76,7 @@ module MiMOWheel
                 info('---- git commit not need')
                 return
             end
-            if system("git commit -m '#{comment}'")
+            if exec_command("git commit -m '#{comment}'")
                 info('---- git commit success')
             else
                 info('---- git commit fail')
@@ -90,7 +90,8 @@ module MiMOWheel
                 info('---- git push not need')
                 return
             end
-            if system("git push")
+            
+            if exec_command("git push")
                 info('---- git push success')
             else
                 info('---- git push fail')
@@ -99,7 +100,8 @@ module MiMOWheel
         end
 
         def exec_command(command)
-            system(command)
+            info("call command: #{command}")
+            return system(command)
         end
     end
 end 
