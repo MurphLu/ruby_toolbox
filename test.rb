@@ -20,6 +20,17 @@ require 'rmagick'
 #     puts list
 # end
 
-count=0
-puts count+=1
-puts Dir.glob(File.join(Dir.pwd(), "**/*.pdf")).length
+# count=0
+# puts count+=1
+# puts Dir.glob(File.join(Dir.pwd(), "**/*.pdf")).length
+File.open('table.sql', 'r') do |f|
+    f.readlines.each do |line|
+        puts line
+        line.strip.downcase
+        if line.strip.downcase.index('create table')
+            puts line
+        else
+            # puts 'not table'
+        end
+    end
+end

@@ -1,8 +1,8 @@
 require 'actions/action'
-require 'utils/proxy_manager'
 
 module MiMOWheel
     class GitTools < Action
+        
         def check_and_fire(args)
             params = anaylaze_params(args)
             exec(params[0], params[1], params[2], params[3])
@@ -30,7 +30,7 @@ module MiMOWheel
         end
         
         def exec(need_add, need_commit, need_push, comment)
-            check_and_set_proxy()
+            check_to_set_proxy()
             if need_add 
                 check_and_run_add(comment)
             end
@@ -40,25 +40,19 @@ module MiMOWheel
             if need_push
                 check_and_run_push(comment)
             end
-            MiMOWheel::ProxyManager.unset_proxy()
+            unset_proxy()
             # command = add_command + commit_command + push_command
             # return command
         end
 
-        def check_and_set_proxy
+        def check_to_set_proxy
             git_remote_url_github_flag=`git remote get-url --all origin | grep github.com | wc -l`
             if git_remote_url_github_flag.strip == '0'
                 info("no github remote skip set proxy")
                 return 
             end
             info('remote is github')
-            MiMOWheel::ProxyManager.check_and_set_proxy()
-        end
-
-        def unset_proxy
-            ENV.delete('http_proxy')
-            ENV.delete('https_proxy')
-            ENV.delete('all_proxy')
+            check_and_set_proxy()
         end
 
         def check_and_run_add(comment)
@@ -93,28 +87,19 @@ module MiMOWheel
             puts 'step 3. check if need push'
             commit_status=`git status | grep 'Your branch is ahead of' | wc -l`
             if commit_status.strip == '0'
-                puts '---- git push not need'
+                info('---- git push not need')
                 return
             end
             if system("git push")
-                puts '---- git push success'
+                info('---- git push success')
             else
-                puts '---- git push fail'
+                info('---- git push fail')
             end
-            puts formatted_log("finish git action with comment: #{comment}")
+            info("finish git action with comment: #{comment}")
         end
 
         def exec_command(command)
             system(command)
-        end
-
-        def formatted_log(log)
-            log_len = 68
-            str = '===================================================================='
-            prefix_suffix_len = (68 - log.length) / 2
-            prefix_suffix = str[0, prefix_suffix_len];
-            formatted = "#{prefix_suffix} #{log} #{prefix_suffix}"
-            return formatted
         end
     end
 end 
