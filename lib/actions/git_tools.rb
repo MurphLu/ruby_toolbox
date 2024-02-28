@@ -22,8 +22,9 @@ module MiMOWheel
 
         def get_command(args)
             args.each do |arg|
-                if arg.include?("-")
-                    return arg
+                if(arg == "-c")
+                    index = args.index(arg)
+                    return args[index + 1]
                 end
             end 
             return nil 
