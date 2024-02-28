@@ -42,7 +42,7 @@ module MiMOWheel
             end
             unset_proxy()
 
-            info("run finish congratulations 👏👏👏")
+            info("👏👏👏 congratulations!!! run success")
             # command = add_command + commit_command + push_command
             # return command
         end
