@@ -2,7 +2,8 @@ require 'actions/action'
 
 module MiMOWheel
     class GitTools < Action
-        
+        MAX_PUSH_ATTEMPT = 3
+
         def check_and_fire(args)
             params = anaylaze_params(args)
             exec(params[0], params[1], params[2], params[3])
@@ -42,7 +43,7 @@ module MiMOWheel
                 check_and_run_push(comment)
             end
             unset_proxy()
-
+            info("finish git action with comment: #{comment}")
             info("👏👏👏 congratulations!!! run success")
             # command = add_command + commit_command + push_command
             # return command
@@ -93,13 +94,20 @@ module MiMOWheel
                 info('---- git push not need')
                 return
             end
-            
-            if exec_command("git push")
-                info('---- git push success')
-            else
-                info('---- git push fail')
+            attempt = 1
+            while !exec_command("git push") && attempt <= MAX_PUSH_ATTEMPT
+                info("---- git push fail, attempt: #{attempt}")
+                attempt += 1
+                sleep(1)
             end
-            info("finish git action with comment: #{comment}")
+            
+            commit_status=`git status | grep 'Your branch is ahead of' | wc -l`
+            if commit_status.strip == '0'
+                info("---- git push success after #{attempt} attempt")
+            else
+                info("---- git push fail after #{MAX_PUSH_ATTEMPT} attempt")
+            end
+
         end
 
         def exec_command(command)
