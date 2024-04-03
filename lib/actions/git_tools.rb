@@ -107,7 +107,6 @@ module MiMOWheel
             else
                 info("---- git push fail after #{MAX_PUSH_ATTEMPT} attempt")
             end
-
         end
 
         def exec_command(command)
