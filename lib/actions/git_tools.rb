@@ -32,6 +32,7 @@ module MiMOWheel
         end
         
         def exec(need_add, need_commit, need_push, comment)
+            info("============ start git action with comment: '#{comment}' ============")
             check_to_set_proxy()
             if need_add 
                 check_and_run_add(comment)
@@ -43,7 +44,7 @@ module MiMOWheel
                 check_and_run_push(comment)
             end
             unset_proxy()
-            info("finish git action with comment: #{comment}")
+            info("============ finish git action with comment: '#{comment}' ============")
             info("👏👏👏 congratulations!!! run success")
             # command = add_command + commit_command + push_command
             # return command
