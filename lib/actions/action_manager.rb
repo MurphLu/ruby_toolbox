@@ -11,7 +11,7 @@ module MiMOWheel
             @@actions = {
                     "git" => MiMOWheel::GitTools.new,
                     "clashX" => MiMOWheel::ClashTools.new,
-                    "video" => MiMOWheel::FFmpegTools.new,
+                    "ffmpeg" => MiMOWheel::FFmpegTools.new,
                     "pdf" => MiMOWheel::PdfTools.new,
                     "test" => MiMOWheel::TestTool.new
             }
