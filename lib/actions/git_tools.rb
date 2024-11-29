@@ -17,23 +17,22 @@ module MiMOWheel
               need_commit = command == nil ? true : command.include?("c")
               need_push = command == nil ? true : command.include?("p")
               comment = args[-1]
-              params = [need_add, need_commit, need_push, comment]
-              return params
+              [need_add, need_commit, need_push, comment]
         end
 
         def get_command(args)
             args.each do |arg|
-                if(arg == "-c")
+                if arg == "-c"
                     index = args.index(arg)
                     return args[index + 1]
                 end
-            end 
-            return nil 
+            end
+            nil
         end
         
         def exec(need_add, need_commit, need_push, comment)
             info("============ start git action with comment: '#{comment}' ============")
-            check_to_set_proxy()
+            check_to_set_proxy
             if need_add 
                 check_and_run_add(comment)
             end
@@ -43,7 +42,7 @@ module MiMOWheel
             if need_push
                 check_and_run_push(comment)
             end
-            unset_proxy()
+            unset_proxy
             info("============ finish git action with comment: '#{comment}' ============")
             info("👏👏👏 congratulations!!! run success")
             # command = add_command + commit_command + push_command
@@ -57,7 +56,7 @@ module MiMOWheel
                 return 
             end
             info('remote is github')
-            check_and_set_proxy()
+            check_and_set_proxy
         end
 
         def check_and_run_add(comment)

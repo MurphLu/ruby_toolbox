@@ -4,12 +4,12 @@ module MiMOWheel
             def write_to_file(path, content)
                 File.open(path, 'w') do |f|
                     f.write(content)
-                    f.close()
+                    f.close
                 end
             end
 
             def get_file_list(ext)
-                path = Dir.pwd()
+                path = Dir.pwd
                 
             end
         end

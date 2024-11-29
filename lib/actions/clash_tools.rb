@@ -5,7 +5,7 @@ module MiMOWheel
     class ClashTools < Action
         def check_and_fire(args)
             if args.include?("-us")
-                up_us_config()
+                up_us_config
             end
         end
 
@@ -19,7 +19,7 @@ module MiMOWheel
                 yaml_us = YAML.load_file(path_us)
                 proxies_us = []
                 proxies.each do |proxy|
-                    if(proxy['name'].index('UnitedStates') == 0)
+                    if proxy['name'].index('UnitedStates') == 0
                         proxies_us.push(proxy)
                     end
                 end

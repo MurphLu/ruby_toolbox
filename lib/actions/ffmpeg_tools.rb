@@ -5,8 +5,8 @@ module MiMOWheel
     class FFmpegTools < Action
         def check_and_fire(args)
             url_index = args.index("-url")
-            if !url_index.nil?
-                url = args[index+1]
+            unless url_index.nil?
+                url = args[index + 1]
                 down_load_video(url)
             end
             db = get_arg(args, "-dB")
@@ -22,10 +22,10 @@ module MiMOWheel
 
         def get_arg(args, name)
             idx = args.index(name)
-            if !idx.nil?
-                return args[idx+1]
+            unless idx.nil?
+                return args[idx + 1]
             end
-            return nil
+            nil
         end
         def down_load_video(url)
             system("ffmpeg -i '#{url}' -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 #{Time.now.to_i}.mp4")
