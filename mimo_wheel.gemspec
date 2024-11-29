@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
     s.description = 'Ruby mimo_wheel'
     s.license = 'MIT'
     s.authors = ['Murph.Lu']
-    s.email = ['xVQpD@example.com']
+    s.email = ['murph.lu@163.com']
     s.files = Dir['lib/*', 'lib/*/*', 'LICENSE', 'README.md']
     s.bindir = "bin"
     s.executables = ['mimowheel']
